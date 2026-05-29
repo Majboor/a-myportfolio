@@ -1,0 +1,121 @@
+/* ==========================================================================
+   Accessibility layer — loaded after styles.css so these rules win on ties.
+   Keyboard focus, skip link, reduced-motion, and screen-reader utilities.
+   Kept in a separate file to stay out of the way of design/layout changes.
+   ========================================================================== */
+
+/* --- Visible keyboard focus -------------------------------------------------
+   The base styles only define :hover, so keyboard users had no focus cue.
+   Use :focus-visible so a ring shows for keyboard/AT users but not on mouse
+   click. A shared token keeps the ring consistent and theme-aware. */
+:root {
+  --focus-ring: 0 0 0 2px var(--bg), 0 0 0 4px var(--brand);
+}
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible,
+.btn:focus-visible,
+.theme-btn:focus-visible,
+.brand:focus-visible,
+.nav-links a:focus-visible,
+.card-links a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 8px;
+}
+
+/* Nav text links are inline; give the ring a little breathing room. */
+.nav-links a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+  box-shadow: none;
+}
+
+/* Cards are keyboard-reachable via their inner links; make the whole card
+   read as a hovered card when a child link is focused. */
+.card:focus-within {
+  border-color: color-mix(in srgb, var(--acc, var(--brand)) 55%, var(--border));
+  background: var(--card-hover);
+}
+
+/* --- Skip link --------------------------------------------------------------
+   First focusable element on the page; jumps keyboard/AT users past the nav
+   straight to the main content. Off-screen until focused. */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  box-shadow: var(--shadow);
+  transform: translateY(-150%);
+  transition: transform 0.18s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: none;
+}
+
+/* main receives programmatic focus from the skip link (tabindex=-1); don't
+   paint a focus ring on that non-interactive landmark. */
+main:focus {
+  outline: none;
+}
+
+/* --- Screen-reader-only utility --------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Reduced motion ---------------------------------------------------------
+   Honour prefers-reduced-motion: kill smooth scroll, the floating orbs' and
+   hover transforms, and any transition/animation for users who opt out. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .btn:hover,
+  .btn-primary:hover,
+  .btn-ghost:hover,
+  .theme-btn:hover,
+  .card:hover {
+    transform: none;
+  }
+}
+
+/* --- High-contrast / forced-colors ------------------------------------------
+   Make sure gradient-text and icon-only controls stay legible when the OS
+   forces its own palette. */
+@media (forced-colors: active) {
+  .grad {
+    -webkit-text-fill-color: currentColor;
+    color: currentColor;
+  }
+  .theme-btn,
+  .btn,
+  .card {
+    border: 1px solid;
+  }
+}

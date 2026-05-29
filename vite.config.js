@@ -7,5 +7,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     target: 'es2019',
+    // esbuild minify (Vite default) + CSS minify keep the payload small.
+    cssMinify: true,
+    // Split the React runtime into its own hashed chunk so it stays cached
+    // across content-only redeploys instead of being invalidated with the app.
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+        },
+      },
+    },
   },
 })
