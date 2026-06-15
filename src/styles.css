@@ -480,11 +480,224 @@ main {
   font-size: 13.5px;
 }
 
+/* Command palette trigger (nav) */
+.cmdk-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 10px 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.cmdk-trigger:hover {
+  border-color: var(--brand);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+.cmdk-trigger-label {
+  line-height: 1;
+}
+.cmdk-trigger-kbd {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--faint);
+  background: color-mix(in srgb, var(--border) 55%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
+  line-height: 1;
+}
+
+/* Command palette */
+.cmdk-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(60px, 12vh, 140px) 16px 16px;
+  background: color-mix(in srgb, #05070c 62%, transparent);
+  backdrop-filter: blur(4px);
+  animation: cmdk-fade 0.14s ease;
+}
+@keyframes cmdk-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.cmdk-panel {
+  width: min(640px, 100%);
+  max-height: min(560px, 78vh);
+  display: flex;
+  flex-direction: column;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.75), var(--shadow);
+  overflow: hidden;
+  animation: cmdk-pop 0.16s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+@keyframes cmdk-pop {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.cmdk-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--faint);
+  flex: none;
+}
+.cmdk-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 15.5px;
+}
+.cmdk-input::placeholder {
+  color: var(--faint);
+}
+.cmdk-esc {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--faint);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 7px;
+  line-height: 1;
+}
+.cmdk-list {
+  overflow-y: auto;
+  padding: 6px;
+  flex: 1;
+}
+.cmdk-empty {
+  padding: 34px 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+.cmdk-group + .cmdk-group {
+  margin-top: 4px;
+}
+.cmdk-group-label {
+  padding: 10px 12px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.cmdk-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+.cmdk-item.is-active {
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
+}
+.cmdk-ic {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 9px;
+  color: var(--acc, var(--brand));
+  background: color-mix(in srgb, var(--acc, var(--brand)) 14%, transparent);
+}
+.cmdk-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.cmdk-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cmdk-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cmdk-badge {
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--acc, var(--brand));
+  background: color-mix(in srgb, var(--acc, var(--brand)) 14%, transparent);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+.cmdk-enter {
+  flex: none;
+  color: var(--muted);
+  font-size: 14px;
+}
+.cmdk-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  color: var(--faint);
+  font-size: 12px;
+  flex: none;
+}
+.cmdk-footer kbd {
+  font-family: inherit;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 1px 5px;
+  margin-right: 3px;
+}
+.cmdk-count {
+  margin-left: auto;
+}
+
 @media (max-width: 680px) {
   .nav-links {
     display: none;
   }
   .stat-strip {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .cmdk-trigger-label {
+    display: none;
+  }
+  .cmdk-trigger-kbd {
+    display: none;
   }
 }
