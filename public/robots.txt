@@ -1,0 +1,7 @@
+# robots.txt for waleeds.world
+# Personal portfolio of Waleed Ajmal — full-stack & AI developer.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://waleeds.world/sitemap.xml
