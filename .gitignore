@@ -3,3 +3,9 @@ dist
 .DS_Store
 *.log
 shot.mjs
+
+# test artifacts
+coverage
+playwright-report
+test-results
+.vitest

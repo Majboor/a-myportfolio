@@ -4,17 +4,46 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Personal developer portfolio for Waleed Ajmal — full-stack & AI engineer.",
+  "homepage": "https://waleeds.world",
+  "author": "Waleed Ajmal",
+  "license": "MIT",
+  "keywords": [
+    "portfolio",
+    "react",
+    "vite",
+    "developer",
+    "full-stack",
+    "ai"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/waleedsworld/a-myportfolio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/waleedsworld/a-myportfolio/issues"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^5.4.11"
+    "@vitest/coverage-v8": "^2.1.9",
+    "jsdom": "^25.0.1",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.9"
   }
 }
