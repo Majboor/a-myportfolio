@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0c11">
+<meta name="color-scheme" content="dark">
+<title>MCPs Are for Agents. So Why Did I Turn Upwork&#x27;s MCP Into a CLI?</title>
+<meta name="description" content="MCP is built so agents can talk to software. But once enough functionality sits behind an MCP, a deterministic wrapper turns it into infrastructure conventional software can build on. I tested that idea with Upwork.">
+<meta name="keywords" content="Upwork official MCP, official Upwork MCP server, Upwork MCP, Upwork MCP CLI, Upwork MCP server, Model Context Protocol, MCP CLI, Upwork API, AI agents, Waleed Ajmal">
+<meta name="author" content="Waleed Ajmal">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://waleeds.world/blog/mcps-are-for-agents-so-why-a-cli/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta property="og:site_name" content="Waleed Ajmal">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCPs Are for Agents. So Why Did I Turn Upwork&#x27;s MCP Into a CLI?">
+<meta property="og:description" content="MCP is built so agents can talk to software. But once enough functionality sits behind an MCP, a deterministic wrapper turns it into infrastructure conventional software can build on. I tested that idea with Upwork.">
+<meta property="og:url" content="https://waleeds.world/blog/mcps-are-for-agents-so-why-a-cli/">
+<meta property="og:image" content="https://waleeds.world/blog/assets/upwork-mcp-server.png">
+<meta property="article:author" content="Waleed Ajmal">
+<meta property="article:published_time" content="2026-08-23">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MCPs Are for Agents. So Why Did I Turn Upwork&#x27;s MCP Into a CLI?">
+<meta name="twitter:description" content="MCP is built so agents can talk to software. But once enough functionality sits behind an MCP, a deterministic wrapper turns it into infrastructure conventional software can build on. I tested that idea with Upwork.">
+<meta name="twitter:image" content="https://waleeds.world/blog/assets/upwork-mcp-server.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/blog/blog.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"MCPs Are for Agents. So Why Did I Turn Upwork's MCP Into a CLI?","description":"MCP is built so agents can talk to software. But once enough functionality sits behind an MCP, a deterministic wrapper turns it into infrastructure conventional software can build on. I tested that idea with Upwork.","image":"https://waleeds.world/blog/assets/upwork-mcp-server.png","datePublished":"2026-08-23","dateModified":"2026-08-23","author":{"@type":"Person","name":"Waleed Ajmal","url":"https://waleeds.world/"},"publisher":{"@type":"Person","name":"Waleed Ajmal"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://waleeds.world/blog/mcps-are-for-agents-so-why-a-cli/"}}</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/">waleeds<b>.</b>world</a>
+  <nav><a href="/blog/">Writing</a><a href="https://github.com/waleedsworld" rel="me">GitHub</a></nav>
+</div></header>
+<main class="wrap">
+<div class="post-header">
+  <div class="kicker">Essay · MCP</div>
+  <h1 class="title">MCPs Are for Agents.<br>So Why Did I Turn Upwork's MCP Into <em>a CLI?</em></h1>
+  <p class="dek">MCP is built so agents can talk to software. But go one layer lower, and the same surface can become infrastructure that ordinary software builds on.</p>
+  <div class="meta">
+    <span>By Waleed Ajmal</span><span class="dot">·</span>
+    <span>Aug 23, 2026</span><span class="dot">·</span>
+    <span>6 min read</span>
+    <span class="tag">Cross-posted to Medium</span>
+  </div>
+</div>
+<article>
+<figure>
+  <img src="/blog/assets/upwork-mcp-server.png" alt="Upwork's official MCP Server landing page." loading="lazy">
+  <figcaption>Upwork's official MCP server — an agent interface into a surprisingly large part of the platform.</figcaption>
+</figure>
+
+<p>Upwork recently released an official MCP server. The obvious use case is connecting it to Claude
+or another agent and asking things like:</p>
+<pre><code>find good automation jobs for me</code></pre>
+
+<p>The agent can search Upwork, inspect jobs, look at client history, check your profile, read
+messages and interact with a surprisingly large part of the platform.</p>
+
+<p>I wanted to see what happened if you went one layer lower. So I built a command-line interface
+around it.</p>
+
+<h2>The problem with building directly around an agent</h2>
+
+<p>Agents are great when the task is ambiguous. <em>"Find the five jobs I have the best chance of
+winning"</em> requires reasoning.</p>
+
+<p>But most software operations are not ambiguous. A dashboard does not need an LLM to decide how to
+retrieve five jobs every time somebody refreshes the page. It needs a predictable function.</p>
+
+<p>That is the difference between:</p>
+<pre><code>Can you search Upwork for n8n jobs?</code></pre>
+<p>and:</p>
+<pre><code><span class="k">upwork</span> find_jobs search -p query=n8n -p limit=10 --org talent</code></pre>
+
+<blockquote><p>The second one is boring. And that is exactly why it is useful.</p></blockquote>
+
+<h2>Making MCP deterministic</h2>
+
+<p>The CLI maps Upwork MCP calls into a consistent structure:</p>
+<pre><code><span class="k">upwork</span> &lt;tool&gt; &lt;action&gt; &lt;parameters&gt;</code></pre>
+
+<p>It handles OAuth, account selection, parameters, structured output and Upwork's
+draft/confirmation flow for write operations. Underneath, it is still talking to the official MCP.
+The difference is that another program no longer has to reason about how to use it.</p>
+
+<p>That gives you a much cleaner architecture:</p>
+<pre class="diagram">                 ┌→ <b>AI Agent</b>
+Upwork → <b>MCP</b> → <b>CLI</b> → Backend/API → UI
+                 └→ Automations</pre>
+
+<p>Use the agent where intelligence is valuable. Use deterministic calls where intelligence would
+just introduce variance.</p>
+
+<figure>
+  <img src="/blog/assets/upwork-cli-readme.png" alt="upwork-cli README showing install, login and command examples." loading="lazy">
+  <figcaption>Every tool and action becomes a first-class command, generated live from the server's schemas.</figcaption>
+</figure>
+
+<h2>Why I think this matters</h2>
+
+<p>A lot of the conversation around MCP currently ends at: <em>"Now my AI can use this app."</em>
+But there is another interesting consequence.</p>
+
+<p>If an MCP exposes enough of an application, you can build a deterministic abstraction around it
+and start using those capabilities inside traditional software — job-discovery dashboards,
+opportunity scoring, proposal research, client intelligence, freelancer analytics, scheduled
+workflows, internal tools, custom interfaces.</p>
+
+<p>An AI agent can still analyze the information. It just doesn't have to be your API. That
+distinction becomes increasingly important as people build real products around agent-accessible
+services.</p>
+
+<h2>MCP might become more than an agent interface</h2>
+
+<p>APIs were built primarily so software could talk to software. MCP is being built primarily so
+agents can talk to software.</p>
+
+<p>But once enough useful functionality sits behind MCP servers, developers are inevitably going to
+build layers that make those capabilities usable in conventional applications too. That is what I
+wanted to test with the Upwork CLI.</p>
+
+<p>The interesting part of the official Upwork MCP isn't simply that I can ask Claude to search for
+freelance jobs. It's that Upwork has exposed a substantial <strong>programmable surface</strong> to
+agents — and with a deterministic layer in front of it, that surface can start powering a lot more
+than agents.</p>
+</article><footer class="post-foot">
+  <div class="author">
+    <div class="av">W</div>
+    <div>
+      <div class="who">Waleed Ajmal</div>
+      <div class="bio">Full-stack &amp; AI developer. I build tools that turn agent-accessible
+      services into things software can reliably stand on. — <a href="https://github.com/waleedsworld">@waleedsworld</a></div>
+    </div>
+  </div>
+  <div class="crosspost">Also on Medium · <a href="/blog/mcps-are-for-agents-so-why-a-cli/index.md">Read as Markdown</a> · <a href="/blog/">More writing</a></div>
+</footer>
+</main>
+</body>
+</html>

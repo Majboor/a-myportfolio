@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0c11">
+<meta name="color-scheme" content="dark">
+<title>I Wrapped the Upwork MCP in a CLI. Here&#x27;s Why.</title>
+<meta name="description" content="Upwork shipped an official MCP server. I wrapped it in a command-line interface so software — dashboards, automations, backends — can build on it deterministically. An agent should not have to be your API.">
+<meta name="keywords" content="Upwork official MCP, official Upwork MCP server, Upwork MCP, Upwork MCP CLI, Upwork MCP server, Model Context Protocol, MCP CLI, Upwork API, AI agents, Waleed Ajmal">
+<meta name="author" content="Waleed Ajmal">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://waleeds.world/blog/i-wrapped-the-upwork-mcp-in-a-cli/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta property="og:site_name" content="Waleed Ajmal">
+<meta property="og:type" content="article">
+<meta property="og:title" content="I Wrapped the Upwork MCP in a CLI. Here&#x27;s Why.">
+<meta property="og:description" content="Upwork shipped an official MCP server. I wrapped it in a command-line interface so software — dashboards, automations, backends — can build on it deterministically. An agent should not have to be your API.">
+<meta property="og:url" content="https://waleeds.world/blog/i-wrapped-the-upwork-mcp-in-a-cli/">
+<meta property="og:image" content="https://waleeds.world/blog/assets/upwork-cli-readme.png">
+<meta property="article:author" content="Waleed Ajmal">
+<meta property="article:published_time" content="2026-08-23">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="I Wrapped the Upwork MCP in a CLI. Here&#x27;s Why.">
+<meta name="twitter:description" content="Upwork shipped an official MCP server. I wrapped it in a command-line interface so software — dashboards, automations, backends — can build on it deterministically. An agent should not have to be your API.">
+<meta name="twitter:image" content="https://waleeds.world/blog/assets/upwork-cli-readme.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/blog/blog.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"I Wrapped the Upwork MCP in a CLI. Here's Why.","description":"Upwork shipped an official MCP server. I wrapped it in a command-line interface so software — dashboards, automations, backends — can build on it deterministically. An agent should not have to be your API.","image":"https://waleeds.world/blog/assets/upwork-cli-readme.png","datePublished":"2026-08-23","dateModified":"2026-08-23","author":{"@type":"Person","name":"Waleed Ajmal","url":"https://waleeds.world/"},"publisher":{"@type":"Person","name":"Waleed Ajmal"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://waleeds.world/blog/i-wrapped-the-upwork-mcp-in-a-cli/"}}</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="/">waleeds<b>.</b>world</a>
+  <nav><a href="/blog/">Writing</a><a href="https://github.com/waleedsworld" rel="me">GitHub</a></nav>
+</div></header>
+<main class="wrap">
+<div class="post-header">
+  <div class="kicker">MCP · Tooling</div>
+  <h1 class="title">I Wrapped the Upwork MCP in a CLI.<br><em>Here's why.</em></h1>
+  <p class="dek">Upwork shipped an official MCP server. I put a deterministic command-line layer in front of it — so dashboards, automations and backends can build on it, not just agents.</p>
+  <div class="meta">
+    <span>By Waleed Ajmal</span><span class="dot">·</span>
+    <span>Aug 23, 2026</span><span class="dot">·</span>
+    <span>5 min read</span>
+    <span class="tag">Cross-posted to DEV.to</span>
+  </div>
+</div>
+<article>
+<figure>
+  <img src="/blog/assets/upwork-cli-readme.png" alt="The upwork-cli README: a thin CLI wrapper over the official Upwork MCP server." loading="lazy">
+  <figcaption>upwork-cli — a thin, deterministic wrapper over the official Upwork MCP server.</figcaption>
+</figure>
+
+<p>The official Upwork MCP is much more interesting than <em>"Claude can now search Upwork."</em></p>
+
+<p>It exposes actual Upwork functionality to agents: jobs, profiles, proposals, messages,
+contracts, client data, competitor bid information — and even write actions.</p>
+
+<p>But there was one problem.</p>
+
+<p><strong>MCPs are designed for agents.</strong> I wanted something deterministic enough to build
+software on top of.</p>
+
+<p>So I built a CLI around the official Upwork MCP.</p>
+
+<p>Instead of asking an agent:</p>
+<pre><code><span class="c"># fuzzy, non-deterministic</span>
+find me good n8n jobs</code></pre>
+
+<p>I can run something predictable:</p>
+<pre><code><span class="k">upwork</span> find_jobs search -p query=n8n --org talent</code></pre>
+
+<p>Same command. Same parameters. Structured output.</p>
+
+<p><strong>That distinction matters.</strong></p>
+
+<h2>Why not just connect an agent to a frontend?</h2>
+
+<p>You technically can. But an agent is not a great API.</p>
+
+<p>An LLM might choose a different tool, interpret the prompt differently, format its response
+differently, or make several unnecessary calls before getting the data you wanted.</p>
+
+<p>That is useful when you want reasoning. It is annoying when your frontend just needs:</p>
+<pre><code>GET   jobs
+GET   profile
+GET   proposals
+SEND  message</code></pre>
+
+<p>The CLI creates a deterministic layer between the MCP and everything else.</p>
+
+<pre class="diagram">Upwork
+   ↓
+Official <b>MCP</b>
+   ↓
+<b>CLI</b>   ← deterministic layer
+   ↓
+API / Backend / Automations / Frontend</pre>
+
+<p>The agent can still sit on top when reasoning is useful. But it no longer needs to be in the
+middle of every operation.</p>
+
+<h2>This opens up much more interesting stuff</h2>
+
+<p>Once the MCP has a predictable interface, it stops being only an AI-assistant integration.
+You can build:</p>
+
+<h3>Dashboards</h3>
+<p>Search jobs and visualize proposal counts, client spend, hiring history, bid ranges and other
+signals.</p>
+
+<h3>Automations</h3>
+<p>Run searches every hour, score opportunities, route interesting jobs and generate alerts.</p>
+
+<h3>Freelancer analytics</h3>
+<p>Pull your profile, rates, work history, Connects, proposals and transactions into your own tools.</p>
+
+<h3>Agentic workflows</h3>
+<p>Let an agent analyze 20 jobs while deterministic commands handle actually fetching the data.</p>
+
+<h3>Actual applications</h3>
+<p>Put a backend in front of the CLI and suddenly the official MCP can power normal interfaces
+instead of only living inside Claude or another MCP client.</p>
+
+<hr class="rule">
+
+<h2>The CLI itself</h2>
+
+<p>It does its own OAuth 2.1 login (dynamic client registration + PKCE, tokens auto-refresh), then
+exposes <strong>every</strong> tool the server publishes through one generic dispatcher — nothing
+hardcoded, so it automatically covers any tool Upwork adds later.</p>
+
+<pre><code><span class="c"># install</span>
+<span class="k">cd</span> upwork-cli
+npm install
+npm link          <span class="c"># optional: puts `upwork` on your PATH</span>
+
+<span class="c"># authorize once — tokens persist &amp; refresh</span>
+<span class="k">upwork</span> login</code></pre>
+
+<p>Every tool <strong>and every action</strong> is a first-class command, generated live from the
+server's schemas, so coverage is always complete:</p>
+
+<pre><code><span class="k">upwork</span> commands                              <span class="c"># every tool + action, one screen</span>
+<span class="k">upwork</span> find_jobs search -p query=n8n -p limit=5 --org talent
+<span class="k">upwork</span> get_profile get --org talent
+<span class="k">upwork</span> list_contracts search --org talent
+<span class="k">upwork</span> send_message send -p room_id=room_xxx -p text=<span class="s">"Following up"</span> --org talent</code></pre>
+
+<p>Write actions follow Upwork's own draft → confirm flow, and anything that binds money
+(accepting an offer, funding a milestone) still finalizes on upwork.com by design. The point is
+not to route around Upwork — it is to make the read/write surface callable from software.</p>
+
+<div class="note"><b>One wording note.</b> I am deliberately not saying "you can't build an API out
+of an agent." You can. The sharper, more defensible claim is this: <strong>an agent should not
+<em>have</em> to be your API.</strong></div>
+
+<h2>Why this matters</h2>
+
+<p>MCP gives AI agents access to software. But once you put a deterministic layer around that
+access, the same infrastructure starts becoming useful for software itself.</p>
+
+<p>The Upwork MCP is not just a new way to chat with Upwork. It is potentially a
+<strong>new programmable interface into Upwork</strong> — and that is the part I find most
+interesting.</p>
+</article><footer class="post-foot">
+  <div class="author">
+    <div class="av">W</div>
+    <div>
+      <div class="who">Waleed Ajmal</div>
+      <div class="bio">Full-stack &amp; AI developer. I build tools that turn agent-accessible
+      services into things software can reliably stand on. — <a href="https://github.com/waleedsworld">@waleedsworld</a></div>
+    </div>
+  </div>
+  <div class="crosspost">Also on DEV.to · <a href="/blog/i-wrapped-the-upwork-mcp-in-a-cli/index.md">Read as Markdown</a> · <a href="/blog/">More writing</a></div>
+</footer>
+</main>
+</body>
+</html>

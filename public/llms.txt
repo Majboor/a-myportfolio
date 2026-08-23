@@ -1,0 +1,16 @@
+# waleeds.world
+
+> Personal site and blog of Waleed Ajmal — full-stack & AI developer. Writing on the
+> Upwork official MCP, the Model Context Protocol, AI agents, and developer tooling —
+> including a deterministic CLI built on the official Upwork MCP server.
+
+## Blog
+- [Writing — index](https://waleeds.world/blog/): all posts
+- [I Wrapped the Upwork MCP in a CLI. Here's Why.](https://waleeds.world/blog/i-wrapped-the-upwork-mcp-in-a-cli/): Upwork shipped an official MCP server. I wrapped it in a command-line interface so software — dashboards, automations, backends — can build on it deterministically. An agent should not have to be your API. Markdown: https://waleeds.world/blog/i-wrapped-the-upwork-mcp-in-a-cli/index.md
+- [MCPs Are for Agents. So Why Did I Turn Upwork's MCP Into a CLI?](https://waleeds.world/blog/mcps-are-for-agents-so-why-a-cli/): MCP is built so agents can talk to software. But once enough functionality sits behind an MCP, a deterministic wrapper turns it into infrastructure conventional software can build on. I tested that idea with Upwork. Markdown: https://waleeds.world/blog/mcps-are-for-agents-so-why-a-cli/index.md
+- [The Upwork MCP, Explained — and Why I Wrapped It in a CLI](https://waleeds.world/blog/what-is-the-upwork-mcp-and-why-a-cli/): What is the Upwork MCP server, what can it actually do, and why did I build a command-line interface around it? A plain-English walkthrough of turning an agent interface into something software can use. Markdown: https://waleeds.world/blog/what-is-the-upwork-mcp-and-why-a-cli/index.md
+
+## About
+- Author: Waleed Ajmal (https://github.com/waleedsworld)
+- Topics: Model Context Protocol (MCP), AI agents, deterministic tooling, Upwork MCP, developer CLIs
+- Full text of every post is available as Markdown at each post URL + `index.md`.
